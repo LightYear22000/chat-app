@@ -1,6 +1,6 @@
 let Peer = require('simple-peer')
 const socket = io()
-const video = document.querySelector('video')
+const video = document.querySelector('#nonPeerVideo')
 const filter = document.querySelector('#filter')
 const checkboxTheme = document.querySelector('#theme')
 let client = {}
@@ -82,10 +82,7 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             setTimeout(() => SendFilter(currentFilter), 1000)
 
             video.addEventListener('click', () => {
-                if (video.volume != 0)
-                    video.volume = 0
-                else
-                    video.volume = 1
+                video.muted = !video.muted
             })
 
         }
@@ -142,4 +139,4 @@ function CreateDiv() {
     document.querySelector('#peerDiv').appendChild(div)
     if (checkboxTheme.checked == true)
         document.querySelector('#muteText').style.color = "#fff"
-}
+} 

@@ -4,6 +4,7 @@ var inputRoomNumber = document.getElementById('roomNumber');
 var btnGoRoom = document.getElementById('goRoom');
 var localRoom = document.getElementById('localVideo');
 var remoteVideo = document.getElementById('remoteVideo');
+var watchify = require('watchify')
 
 var roomNumber, localStream, remoteStream, rtcPeerConnection;
 
@@ -86,3 +87,4 @@ function onAddStream(event) {
     remoteStream = event.stream;
 }
 
+    

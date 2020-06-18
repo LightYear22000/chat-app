@@ -7,7 +7,7 @@ const { generateMessage, generateLocationMessage } = require('./utils/messages')
 const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/users')
 
 const app = express()
-const server = http.createServer(app)
+const server = http.Server(app)
 const io = socketio(server)
 
 const port = process.env.PORT || 3000
@@ -15,9 +15,47 @@ const publicDirectoryPath = path.join(__dirname, '../public')
 
 app.use(express.static(publicDirectoryPath))
 
+let clients = 0
+
+function Disconnect() {
+    if (clients > 0) {
+        if (clients <= 2){
+            this.broadcast.emit("disconnectPeer")
+        }
+        clients--
+    }
+}
+
+function SendOffer(offer) {
+    console.log('Offer Recieved from Init-node and being relayed to Non-init-node.');
+    this.broadcast.emit("BackOffer", offer)
+}
+
+function SendAnswer(data) {
+    console.log('Relaying the answer from non-init-node to init-node.')
+    this.broadcast.emit("BackAnswer", data)
+}
+
 io.on('connection', (socket) => {
     console.log('New WebSocket connection')
 
+    socket.emit('custom', () => console.log('asdf'));
+
+    socket.on("NewClient", function () {
+        console.log('New Client.')
+        if (clients < 2) {
+            if (clients == 1) {
+                this.emit('CreatePeer')
+            }
+        }
+        else
+        this.emit('SessionActive')
+        clients++;
+    })
+    
+    socket.on('Offer', SendOffer)
+    socket.on('Answer', SendAnswer)
+    socket.on('disconnectPeer', Disconnect)
     socket.on('join', (options, callback) => {
         const { error, user } = addUser({ id: socket.id, ...options })
 
