@@ -54,7 +54,6 @@ io.on('connection', (socket) => {
     })
     
     socket.on('Offer', SendOffer)
-
     socket.on('Answer', SendAnswer)
     socket.on('disconnectPeer', Disconnect)
     socket.on('join', (options, callback) => {
